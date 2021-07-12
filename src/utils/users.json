@@ -1,0 +1,18 @@
+{
+  "usersInfo": [
+    {
+      "id": "1293",
+      "name": "Mikki",
+      "surname": "Mouse",
+      "age": "93",
+      "city": "Los Angeles"
+    },
+    {
+      "id": "1396",
+      "name": "Artem",
+      "surname": "Kalinin",
+      "age": "33",
+      "city": "Moscow"
+    }
+  ]
+}
