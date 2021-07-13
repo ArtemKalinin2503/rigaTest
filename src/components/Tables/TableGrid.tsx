@@ -5,11 +5,15 @@ import Paper from '@material-ui/core/Paper';
 import { TUser } from "../../hooks/useGetDataUsers/types";
 import { Table, TableBody, TableContainer, TableHead, TableRow, Button, IconButton } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
-import { useAddCopyDataUsers } from "../../hooks/useAddCopyDataUsers";
 
 interface IPropsTableGrid {
     cell: any,
+    idCount?: string,
     rows: any,
+    handleCopyTable?: any,
+    nextCopyIndex?: number,
+    handleEditRow?: any,
+    handleDeleteRow?: any
 }
 
 const useStyles = makeStyles({
@@ -57,60 +61,61 @@ const TableGrid = (props: IPropsTableGrid) => {
     
     const classes = useStyles();
     
-    const {addUsersCopy, loading, data} = useAddCopyDataUsers();
-    
     const {
         cell,
+        idCount,
         rows,
+        handleCopyTable,
+        nextCopyIndex,
+        handleEditRow,
+        handleDeleteRow
     } = props
     
     const [selected, setSelected] = useState<TUser>();
-    const [countCopy, setCountCopy] = useState(0);
     
+    // Клик по строке в таблице
     const handleClickRow = (
         event: React.MouseEvent<HTMLTableRowElement, MouseEvent>,
         row: TUser,
         index: React.Key | null | undefined
     ) => {
         setSelected(row);
-        console.log(index);
-        console.log(row);
     };
     
     // Создать копию таблицы
-    const handleCopyTable = async () => {
-        let count = 0;
-        console.log(countCopy)
-        await addUsersCopy(
-            rows,
-            countCopy ? countCopy + 1 : count + 1
-        );
+    const handleCopy = async () => {
+        const copyDataTables = {
+            idCount: nextCopyIndex,
+            dataTables: rows
+        };
+        handleCopyTable(copyDataTables);
     };
     
     // Удалить копию таблицы
     const handleDeleteCopyTable = () => {
-        if (countCopy) {
-            // @ts-ignore
-            setCountCopy(countCopy - 1);
-        }
+    
+    };
+    
+    // Редактировать значение строки
+    const editRow = (rowSelectIndex: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        handleEditRow(rowSelectIndex, idCount);
+    };
+    
+    // Удалить значение строки
+    const deleteRow = (rowSelectIndex: any) => {
+        handleDeleteRow(rowSelectIndex, idCount);
     };
     
     useEffect(() => {
-        // Получаю самый последний idCount - для того, чтобы если были ранее сохраненные копии, актуализировать свой count
-        const maxCount = data?.length && data.reduce((acc, curr) => acc.b > curr.b ? acc : curr);
-        // @ts-ignore
-        if (maxCount?.idCopy) {
-            // @ts-ignore
-            setCountCopy(maxCount?.idCopy);
-        }
-        console.log(data);
-    }, [data]);
+        console.log(rows);
+    }, [rows]);
     
+    // @ts-ignore
     const tableJSX = (cell: string[], rows: TUser[]) => {
         return (
             <TableContainer component={Paper}>
                 <div className={classes.controlsTable}>
-                    <Button variant="contained" color="primary" className={classes.btnCopy} onClick={handleCopyTable}>
+                    <Button variant="contained" color="primary" className={classes.btnCopy} onClick={handleCopy}>
                         Copy table
                     </Button>
                     <IconButton aria-label="Close" size="small" className={classes.btnClose}>
@@ -120,7 +125,7 @@ const TableGrid = (props: IPropsTableGrid) => {
                 <Table className={classes.table} size="small" aria-label="">
                     <TableHead className={classes.headTable}>
                         <TableRow>
-                            {cell && cell.map((itemCell: string, index: React.Key | null | undefined) => {
+                            {cell && cell.map((itemCell: string, index: any) => {
                                 return (
                                     <TableCell key={index} className={classes.headTableCell}>
                                         {itemCell}
@@ -134,7 +139,7 @@ const TableGrid = (props: IPropsTableGrid) => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {rows.map((row: TUser, index: React.Key | null | undefined) => (
+                        {rows?.length && rows.map((row: TUser, index: React.Key | null | undefined) => (
                             <TableRow
                                 className={classes.tableRow}
                                 classes={{ hover: classes.hover, selected: classes.selected }}
@@ -148,12 +153,20 @@ const TableGrid = (props: IPropsTableGrid) => {
                                 <TableCell className={classes.tableCell}>{row.age}</TableCell>
                                 <TableCell className={classes.tableCell}>{row.city}</TableCell>
                                 <TableCell>
-                                    <Button className={classes.tableCell} color="primary">
+                                    <Button
+                                        className={classes.tableCell}
+                                        color="primary"
+                                        onClick={(index) => editRow(index)}
+                                    >
                                         Edit
                                     </Button>
                                 </TableCell>
                                 <TableCell>
-                                    <Button className={classes.tableCell} color="primary">
+                                    <Button
+                                        className={classes.tableCell}
+                                        color="primary"
+                                        onClick={(index) => deleteRow(index)}
+                                    >
                                         Delete
                                     </Button>
                                 </TableCell>
@@ -164,11 +177,10 @@ const TableGrid = (props: IPropsTableGrid) => {
             </TableContainer>
         )
     };
+ 
     return (
         <>
             {tableJSX(cell, rows)}
-            {/*// @ts-ignore*/}
-            {data && tableJSX(cell, data)}
         </>
     );
 }

@@ -33,6 +33,8 @@ const UsersInfo = () => {
     
     const userTableNameCell = ['Name', 'Surname', 'Age', 'City'];
     
+    const [copyDataTable, setCopyDataTable] = useState([] as Array<object>);
+    const [nextCopyIndex, setNextCopyIndex] = useState(1);
     
     useEffect(() => {
         console.log(data);
@@ -43,6 +45,40 @@ const UsersInfo = () => {
         e.preventDefault();
         await addUser(values);
     };
+    
+    // Кнопка копировать таблицу
+    const handleCopyOriginal = (copyDataTablesUsers: any) => {
+        setCopyDataTable(
+            [...copyDataTable, copyDataTablesUsers]
+        );
+        setNextCopyIndex(nextCopyIndex + 1);
+    };
+    
+    // Редактировать строку в ячейке
+    const handleEditRow = (index: any, idCount: any) => {
+        console.log('rowIndex ' + index);
+        console.log('idCountTable ' + idCount);
+    };
+    
+    // Удалить строку в ячейке
+    const handleDeleteRow = (index: any, idCount: any) => {
+        console.log('rowIndex ' + index);
+        console.log('idCountTable ' + idCount);
+        console.log(copyDataTable);
+        const newCopyDataTable = copyDataTable;
+        newCopyDataTable.forEach((item) => {
+            // @ts-ignore
+            if (item?.idCount === idCount) {
+                // @ts-ignore
+                item?.dataTables.splice(index, 1);
+            }
+        });
+        setCopyDataTable(newCopyDataTable);
+    };
+    
+    useEffect(() => {
+        console.log(copyDataTable);
+    }, [copyDataTable]);
     
     return (
         <div className={classes.root}>
@@ -59,7 +95,29 @@ const UsersInfo = () => {
                     <TableGrid
                         cell={userTableNameCell}
                         rows={data}
+                        nextCopyIndex={nextCopyIndex}
+                        handleCopyTable={(copyDataTablesUsers: TUser[]) => handleCopyOriginal(copyDataTablesUsers)}
+                        handleEditRow={(index: any, idCount: any) => handleEditRow(index, idCount)}
+                        handleDeleteRow={(index: any, idCount: any) => handleDeleteRow(index, idCount)}
                     />
+                }
+                {copyDataTable?.length && copyDataTable.map((item) => {
+                    return (
+                        <>
+                            <TableGrid
+                                cell={userTableNameCell}
+                                // @ts-ignore
+                                idCount={item?.idCount}
+                                // @ts-ignore
+                                rows={item?.dataTables}
+                                nextCopyIndex={nextCopyIndex}
+                                handleCopyTable={(copyDataTablesUsers: TUser[]) => handleCopyOriginal(copyDataTablesUsers)}
+                                handleEditRow={(index: any, idCount: string) => handleEditRow(index, idCount)}
+                                handleDeleteRow={(index: any, idCount: string) => handleDeleteRow(index, idCount)}
+                            />
+                        </>
+                    )
+                })
                 }
             </div>
         </div>
