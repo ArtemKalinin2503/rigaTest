@@ -13,7 +13,8 @@ interface IPropsTableGrid {
     handleCopyTable?: any,
     nextCopyIndex?: number,
     handleEditRow?: any,
-    handleDeleteRow?: any
+    handleDeleteRow?: any,
+    handleDeleteTable? : any
 }
 
 const useStyles = makeStyles({
@@ -68,7 +69,8 @@ const TableGrid = (props: IPropsTableGrid) => {
         handleCopyTable,
         nextCopyIndex,
         handleEditRow,
-        handleDeleteRow
+        handleDeleteRow,
+        handleDeleteTable
     } = props
     
     const [selected, setSelected] = useState<TUser>();
@@ -86,14 +88,16 @@ const TableGrid = (props: IPropsTableGrid) => {
     const handleCopy = async () => {
         const copyDataTables = {
             idCount: nextCopyIndex,
-            dataTables: rows
+            dataTables: [...rows]
         };
         handleCopyTable(copyDataTables);
     };
     
     // Удалить копию таблицы
     const handleDeleteCopyTable = () => {
-    
+        if (idCount && handleDeleteTable) {
+            handleDeleteTable(idCount);
+        }
     };
     
     // Редактировать значение строки

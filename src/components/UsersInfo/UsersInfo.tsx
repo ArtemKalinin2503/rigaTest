@@ -62,18 +62,23 @@ const UsersInfo = () => {
     
     // Удалить строку в ячейке
     const handleDeleteRow = (index: any, idCount: any) => {
-        console.log('rowIndex ' + index);
-        console.log('idCountTable ' + idCount);
-        console.log(copyDataTable);
         const newCopyDataTable = copyDataTable;
-        newCopyDataTable.forEach((item) => {
-            // @ts-ignore
+        newCopyDataTable.forEach((item: any) => {
             if (item?.idCount === idCount) {
-                // @ts-ignore
                 item?.dataTables.splice(index, 1);
             }
         });
         setCopyDataTable(newCopyDataTable);
+    };
+    
+    // Удаление таблицы
+    const handleDeleteTable = (idCount: any) => {
+        const newCopyDataTable = copyDataTable;
+        
+        const indexTable = copyDataTable.findIndex((el: any) => el.idCount === idCount)
+        newCopyDataTable?.splice(indexTable, 1);
+        
+        setCopyDataTable([...newCopyDataTable]);
     };
     
     useEffect(() => {
@@ -114,6 +119,7 @@ const UsersInfo = () => {
                                 handleCopyTable={(copyDataTablesUsers: TUser[]) => handleCopyOriginal(copyDataTablesUsers)}
                                 handleEditRow={(index: any, idCount: string) => handleEditRow(index, idCount)}
                                 handleDeleteRow={(index: any, idCount: string) => handleDeleteRow(index, idCount)}
+                                handleDeleteTable={(idCount: any) => handleDeleteTable(idCount)}
                             />
                         </>
                     )
