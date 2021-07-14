@@ -55,13 +55,13 @@ const UsersInfo = () => {
     };
     
     // Редактировать строку в ячейке
-    const handleEditRow = (index: any, idCount: any) => {
+    const handleEditRow = (index: any, idCount: string) => {
         console.log('rowIndex ' + index);
         console.log('idCountTable ' + idCount);
     };
     
     // Удалить строку в ячейке
-    const handleDeleteRow = (index: any, idCount: any) => {
+    const handleDeleteRow = (index: any, idCount: string) => {
         const newCopyDataTable = copyDataTable;
         newCopyDataTable.forEach((item: any) => {
             if (item?.idCount === idCount) {
@@ -72,7 +72,7 @@ const UsersInfo = () => {
     };
     
     // Удаление таблицы
-    const handleDeleteTable = (idCount: any) => {
+    const handleDeleteTable = (idCount: string) => {
         const newCopyDataTable = copyDataTable;
         
         const indexTable = copyDataTable.findIndex((el: any) => el.idCount === idCount)
@@ -102,24 +102,22 @@ const UsersInfo = () => {
                         rows={data}
                         nextCopyIndex={nextCopyIndex}
                         handleCopyTable={(copyDataTablesUsers: TUser[]) => handleCopyOriginal(copyDataTablesUsers)}
-                        handleEditRow={(index: any, idCount: any) => handleEditRow(index, idCount)}
-                        handleDeleteRow={(index: any, idCount: any) => handleDeleteRow(index, idCount)}
+                        handleEditRow={(index: any, idCount: string) => handleEditRow(index, idCount)}
+                        handleDeleteRow={(index: any, idCount: string) => handleDeleteRow(index, idCount)}
                     />
                 }
-                {copyDataTable?.length && copyDataTable.map((item) => {
+                {copyDataTable?.length && copyDataTable.map((item: any) => {
                     return (
                         <>
                             <TableGrid
                                 cell={userTableNameCell}
-                                // @ts-ignore
                                 idCount={item?.idCount}
-                                // @ts-ignore
                                 rows={item?.dataTables}
                                 nextCopyIndex={nextCopyIndex}
                                 handleCopyTable={(copyDataTablesUsers: TUser[]) => handleCopyOriginal(copyDataTablesUsers)}
                                 handleEditRow={(index: any, idCount: string) => handleEditRow(index, idCount)}
                                 handleDeleteRow={(index: any, idCount: string) => handleDeleteRow(index, idCount)}
-                                handleDeleteTable={(idCount: any) => handleDeleteTable(idCount)}
+                                handleDeleteTable={(idCount: string) => handleDeleteTable(idCount)}
                             />
                         </>
                     )
